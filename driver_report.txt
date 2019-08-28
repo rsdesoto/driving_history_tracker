@@ -1,0 +1,5 @@
+Alex: 265 miles @ 43 mph
+Sally: 78 miles @ 18 mph
+Kate: 63 miles @ 20 mph
+Dan: 39 miles @ 47 mph
+Bob: 0 miles
