@@ -1,47 +1,74 @@
-require 'time'
 
-if ARGV.length != 1
-  STDERR.puts("Please enter the name of the file you would like to read in.")
-  exit(false)
+require 'time'
+require_relative 'driver_calculations'
+
+# helper functions ##########################################
+
+def get_file_name
+  if ARGV.length != 1
+    STDERR.puts("Please enter the name of the file you would like to read in.")
+    exit(false)
+  else
+    filename = ARGV[0]
+  end
 end
 
-filename = ARGV[0]
-driver_record_total = {}
+def update_driver_record(filename)
+  driver_record_total = {}
 
-File.foreach(filename) do |line|
-  driver_record = line.split(" ")
+  File.foreach(filename) do |line|
+    driver_record = line.split(" ")
 
-  if driver_record[0].downcase == "driver"
-    driver_record_total[driver_record[1]] = {distance: 0, hrs: 0}
-  elsif driver_record[0].downcase == "trip"
-    distance = driver_record[4].to_f
-    hrs = (Time.parse(driver_record[3]) - Time.parse(driver_record[2]))/3600
-    mph = distance / hrs
+    data_type = driver_record[0]
+    driver_name = driver_record[1]
 
-    if mph >= 5.0 && mph <= 100.0
-      driver_record_total[driver_record[1]][:distance] += distance
-      driver_record_total[driver_record[1]][:hrs] += hrs
+    if data_type.downcase == "driver"
+      driver_record_total[driver_name] = {distance: 0, hrs: 0}
+    elsif data_type.downcase == "trip"
+      trip_distance_and_time = DriverCalculations.trip_calculation(driver_record[2], driver_record[3], driver_record[4].to_f)
+
+      driver_record_total[driver_name][:distance] += trip_distance_and_time[:distance]
+      driver_record_total[driver_name][:hrs] += trip_distance_and_time[:hrs]
     end
   end
+
+  driver_record_total
 end
 
-driver_record_sorted = driver_record_total.sort_by {|k, v| -v[:distance]}
+def output_driver_report(driver_record_total)
+  driver_record_sorted = driver_record_total.sort_by {|driver, info| -info[:distance]}
 
-driver_report = File.new('driver_report.txt', 'w')
+  driver_report = File.new('driver_report.txt', 'w')
 
-driver_record_sorted.each do |driver|
-  if driver[1][:distance] > 0
-    mph = driver[1][:distance] / driver[1][:hrs]
-    mph_str = " @ #{mph.round} mph"
-  else
-    mph_str = ""
+  driver_record_sorted.each do |driver|
+    mph_str = DriverCalculations.mph_string_generation(driver)
+
+    report_record = "#{driver[0]}: #{driver[1][:distance].round} miles" + mph_str + "\n"
+
+    print report_record
+    driver_report.write(report_record)
   end
-
-  report_record = "#{driver[0]}: #{driver[1][:distance].round} miles" + mph_str + "\n"
-
-  print report_record
-  driver_report.write(report_record)
+  driver_report.close
 end
 
-driver_report.close
+# program control ##########################################
 
+def create_report
+  filename = get_file_name
+
+  total_driver_stats = update_driver_record(filename)
+
+  output_driver_report(total_driver_stats)
+end
+
+create_report
+
+
+
+
+# practical object oriented design in ruby
+# class: 100 lines
+# method: 5 lines
+# method takes 4 or fewer parameters
+# controllers can instantiate only one object
+# break these rules if you have a good reason
