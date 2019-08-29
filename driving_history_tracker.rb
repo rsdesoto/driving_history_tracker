@@ -2,28 +2,24 @@ require 'time'
 require_relative 'file_input'
 require_relative 'file_output'
 
-# helper functions ##########################################
+class DriverReport
+  attr_accessor :infile_path, :outfile_path
 
-def get_file_name
-  if ARGV.length != 1
-    STDERR.puts("Please enter the name of the file you would like to read in.")
-    exit(false)
-  else
-    filename = ARGV[0]
+  def initialize(args)
+    @infile_path = args
+    @outfile_path = "driver_report.txt"
+  end
+
+  def run
+    total_driver_stats = FileInput.update_driver_record(@infile_path)
+
+    FileOutput.output_driver_report(total_driver_stats, @outfile_path)
   end
 end
 
-# program control ##########################################
-
-def create_report
-  filename = get_file_name
-
-  total_driver_stats = FileInput.update_driver_record(filename)
-
-  FileOutput.output_driver_report(total_driver_stats)
+if $PROGRAM_NAME == __FILE__
+  DriverReport.new(ARGV[0]).run
 end
-
-create_report
 
 
 

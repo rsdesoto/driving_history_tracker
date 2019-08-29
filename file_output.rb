@@ -1,10 +1,10 @@
 module FileOutput
   extend self
 
-  def output_driver_report(driver_record_total)
+  def output_driver_report(driver_record_total, outfile_name)
     driver_record_sorted = driver_record_total.sort_by {|driver, info| -info[:distance]}
 
-    driver_report = File.new('driver_report.txt', 'w')
+    driver_report = File.new(outfile_name, 'w')
 
     driver_record_sorted.each do |driver|
       mph_str = mph_string_generation(driver)
@@ -16,8 +16,6 @@ module FileOutput
     end
     driver_report.close
   end
-
-  private
 
   def mph_string_generation(driver)
     if driver[1][:distance] > 0

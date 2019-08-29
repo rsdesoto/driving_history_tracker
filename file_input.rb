@@ -23,8 +23,6 @@ module FileInput
     driver_record_total
   end
 
-  private
-
   def trip_calculation(start_time, end_time, distance)
     hrs = (Time.parse(end_time) - Time.parse(start_time))/3600
     mph = distance / hrs
