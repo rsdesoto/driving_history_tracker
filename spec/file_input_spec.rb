@@ -2,7 +2,6 @@ require '../file_input.rb'
 require 'time'
 require 'tempfile'
 
-
 describe "trip_calculation" do
   let(:distance1) { 100 }
   let(:distance2) { 325.3 }

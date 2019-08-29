@@ -11,7 +11,6 @@ module FileOutput
 
       report_record = "#{driver[0]}: #{driver[1][:distance].round} miles" + mph_str + "\n"
 
-      print report_record
       driver_report.write(report_record)
     end
     driver_report.close
