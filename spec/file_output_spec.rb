@@ -11,6 +11,11 @@ describe "mph_string_generation" do
   end
 end
 
+describe "output_driver_report" do
+  let(:test_out_file) { Tempfile.new('txt') }
+
+end
+
 
 
 
